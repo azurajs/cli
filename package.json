@@ -1,0 +1,52 @@
+{
+  "name": "@azurajs/cli",
+  "version": "1.0.1",
+  "description": "CLI from azurajs | Modern TypeScript-first web framework with decorator-based routing, zero dependencies, and built for performance.",
+  "type": "module",
+  "bin": {
+    "azurajs": "bin/azura.js"
+  },
+  "files": [
+    "dist",
+    "bin",
+    "src",
+    "README.md"
+  ],
+  "keywords": [
+    "cli",
+    "azurajs",
+    "framework",
+    "node",
+    "bun"
+  ],
+  "author": "0xviny.dev@gmail.com",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/azurajs/azura.git"
+  },
+  "bugs": {
+    "url": "https://github.com/azurajs/azura/issues"
+  },
+  "homepage": "https://github.com/azurajs/azura#readme",
+  "engines": {
+    "node": ">=18.0.0",
+    "bun": ">=1.0.0"
+  },
+  "scripts": {
+    "build": "tsup",
+    "prepublishOnly": "bun run build"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/prompts": "^2.4.9"
+  },
+  "dependencies": {
+    "commander": "^14.0.2",
+    "prompts": "^2.4.2",
+    "tsup": "^8.5.1"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}

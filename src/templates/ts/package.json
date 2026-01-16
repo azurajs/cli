@@ -1,0 +1,14 @@
+{
+  "name": "azura-app",
+  "private": true,
+  "scripts": {
+    "dev": "ts-node src/main.ts"
+  },
+  "dependencies": {
+    "azurajs": "latest"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0",
+    "ts-node": "^10.9.2"
+  }
+}

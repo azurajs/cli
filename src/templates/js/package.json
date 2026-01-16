@@ -1,0 +1,10 @@
+{
+  "name": "azura-app",
+  "private": true,
+  "scripts": {
+    "dev": "node src/main.js"
+  },
+  "dependencies": {
+    "azurajs": "latest"
+  }
+}
