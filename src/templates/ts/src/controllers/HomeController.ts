@@ -1,16 +1,15 @@
-const { AzuraClient, createLoggingMiddleware } = require("azurajs");
+import { Controller, Get, Res } from "azurajs/decorators";
+import type { ResponseServer } from "azurajs/types";
 
-async function bootstrap() {
-  const app = new AzuraClient();
-  const loggingMiddleware = createLoggingMiddleware(app.getConfig());
-  app.use(loggingMiddleware);
-
-  app.get("/", (req, res) => {
+@Controller("")
+export class HomeController {
+  @Get("/")
+  home(@Res() res: ResponseServer) {
     res.send(`<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AzuraJS - Modern TypeScript Web Framework</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -210,113 +209,20 @@ curl "http://localhost:3000/search?q=typescript&page=2"
 
     <div class="section">
       <h2>📖 Documentation</h2>
-      <p>Visit the <a href="https://azura.js.org/docs/pt" target="_blank">AzuraJS docs (pt)</a> for complete documentation, examples, and guides.</p>
+      <p>Visit the <a href="https://github.com/azurajs/azura" target="_blank">GitHub repository</a> for complete documentation, examples, and guides.</p>
     </div>
   </div>
 </body>
 </html>`);
-  });
+  }
 
-  app.get("/ping", (req, res) => {
+  @Get("/ping")
+  ping(@Res() res: ResponseServer) {
     res.json({
       status: "ok",
       timestamp: Date.now(),
       uptime: process.uptime(),
       environment: process.env.NODE_ENV || "development",
     });
-  });
-
-  app.get("/search", (req, res) => {
-    const query = (req.query && (req.query.q || req.query.query)) || "";
-    const page = (req.query && (req.query.page || req.query.p)) || "1";
-    const currentPage = page ? Number(page) : 1;
-    const searchTerm = String(query || "");
-
-    const results = [
-      { id: 1, title: `Result 1 for "${searchTerm}"`, score: 0.95 },
-      { id: 2, title: `Result 2 for "${searchTerm}"`, score: 0.87 },
-      { id: 3, title: `Result 3 for "${searchTerm}"`, score: 0.76 },
-    ];
-
-    const response = {
-      success: true,
-      query: searchTerm,
-      page: currentPage,
-      results,
-      total: results.length,
-    };
-
-    res.json(response);
-  });
-
-  app.get("/search/advanced", (req, res) => {
-    const filters = Object.assign({}, req.query || {});
-    res.json({
-      success: true,
-      filters,
-      message: "Advanced search with multiple filters",
-    });
-  });
-
-  app.get("/api/users", (req, res) => {
-    const users = [
-      { id: 1, name: "John Doe", email: "john@example.com", role: "admin" },
-      { id: 2, name: "Jane Smith", email: "jane@example.com", role: "user" },
-      { id: 3, name: "Bob Wilson", email: "bob@example.com", role: "user" },
-    ];
-    res.json({ success: true, data: users });
-  });
-
-  app.get("/api/users/:id", (req, res) => {
-    const id = req.params && req.params.id;
-    const userId = Number(id);
-    if (isNaN(userId)) {
-      return res.status(400).json({ success: false, error: "Invalid user ID" });
-    }
-    const user = { id: userId, name: `User ${id}`, email: `user${id}@example.com`, role: "user" };
-    res.json({ success: true, data: user });
-  });
-
-  app.post("/api/users", (req, res) => {
-    const body = req.body || {};
-    if (!body.name || !body.email) {
-      return res.status(400).json({ success: false, error: "Name and email are required" });
-    }
-    const newUser = {
-      id: Date.now(),
-      name: body.name,
-      email: body.email,
-      role: body.role || "user",
-    };
-    res.status(201).json({ success: true, message: "User created successfully", data: newUser });
-  });
-
-  app.put("/api/users/:id", (req, res) => {
-    const id = req.params && req.params.id;
-    const body = req.body || {};
-    const userId = Number(id);
-    if (isNaN(userId)) {
-      return res.status(400).json({ success: false, error: "Invalid user ID" });
-    }
-    const updatedUser = {
-      id: userId,
-      name: body.name || `User ${id}`,
-      email: body.email || `user${id}@example.com`,
-      role: body.role || "user",
-    };
-    res.json({ success: true, message: `User ${id} updated successfully`, data: updatedUser });
-  });
-
-  app.delete("/api/users/:id", (req, res) => {
-    const id = req.params && req.params.id;
-    const userId = Number(id);
-    if (isNaN(userId)) {
-      return res.status(400).json({ success: false, error: "Invalid user ID" });
-    }
-    res.json({ success: true, message: `User ${id} deleted successfully` });
-  });
-
-  await app.listen();
+  }
 }
-
-bootstrap().catch(console.error);

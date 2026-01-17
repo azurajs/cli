@@ -1,9 +1,18 @@
-import { AzuraClient } from "azurajs";
+import { AzuraClient, createLoggingMiddleware } from "azurajs";
+import { applyDecorators } from "azurajs/decorators";
+import { HomeController } from "./controllers/HomeController";
+import { UserController } from "./controllers/UserController";
+import { SearchController } from "./controllers/SearchController";
 
-const client = new AzuraClient();
+async function bootstrap() {
+  const app = new AzuraClient();
 
-client.get("/", (req, res) => {
-  res.send("Hello World To AzuraJS!");
-});
+  const loggingMiddleware = createLoggingMiddleware(app.getConfig());
+  app.use(loggingMiddleware);
 
-client.listen();
+  applyDecorators(app, [HomeController, UserController, SearchController]);
+
+  await app.listen();
+}
+
+bootstrap().catch(console.error);
