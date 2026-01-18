@@ -1,6 +1,6 @@
 {
   "name": "@azurajs/cli",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "CLI from azurajs | Modern TypeScript-first web framework with decorator-based routing, zero dependencies, and built for performance.",
   "type": "module",
   "bin": {

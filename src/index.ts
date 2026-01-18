@@ -7,7 +7,7 @@ import kleur from "kleur";
 import { fileURLToPath } from "url";
 
 const program = new Command();
-program.name("azurajs").description("⚙️ CLI from azurajs - the best framework").version("1.1.0");
+program.name("azurajs").description("⚙️ CLI from azurajs - the best framework").version("1.1.1");
 
 program
   .command("create <name>")
@@ -61,58 +61,28 @@ program
     const __dirname = path.dirname(__filename);
 
     const targetDir = path.resolve(process.cwd(), name);
-    const candidatePaths = [
-      path.join(__dirname, "templates", response.language),
-      path.join(__dirname, "..", "templates", response.language),
-      path.join(process.cwd(), "src", "templates", response.language),
-      path.join(process.cwd(), "templates", response.language),
-      path.join(process.cwd(), "src", "templates", response.language, "src"),
-      path.join(process.cwd(), "templates", response.language, "src"),
-    ];
 
-    let templateDir: string | null = null;
-    for (const p of candidatePaths) {
-      if (fs.existsSync(p)) {
-        templateDir = p;
-        break;
-      }
+    // Caminho direto para a pasta dist/{ts|js} baseado na estrutura da imagem
+    const templateDir = path.resolve(__dirname, "..", "dist", response.language);
+
+    if (!fs.existsSync(templateDir)) {
+      console.error(kleur.red(`❌ Template source not found at: ${templateDir}`));
+      console.error(
+        kleur.yellow("Make sure the 'dist' folder exists and contains 'js' and 'ts' directories."),
+      );
+      process.exit(1);
     }
 
+    // Cria o diretório do projeto
     fs.mkdirSync(targetDir, { recursive: true });
 
-    function copyRecursive(src: string, dest: string) {
-      const st = fs.statSync(src);
-      if (st.isDirectory()) {
-        fs.mkdirSync(dest, { recursive: true });
-        for (const child of fs.readdirSync(src)) {
-          copyRecursive(path.join(src, child), path.join(dest, child));
-        }
-      } else {
-        fs.mkdirSync(path.dirname(dest), { recursive: true });
-        fs.copyFileSync(src, dest);
-      }
-    }
-
-    if (templateDir) {
-      const stat = fs.statSync(templateDir);
-      const destBase =
-        path.basename(templateDir).toLowerCase() === "src"
-          ? path.join(targetDir, "src")
-          : targetDir;
-      if (stat.isDirectory()) {
-        const entries = fs.readdirSync(templateDir);
-        for (const entry of entries) {
-          const srcPath = path.join(templateDir, entry);
-          const destPath = path.join(destBase, entry);
-          try {
-            fs.cpSync(srcPath, destPath, { recursive: true, force: true });
-          } catch {
-            try {
-              copyRecursive(srcPath, destPath);
-            } catch {}
-          }
-        }
-      }
+    // Copia tudo de dentro de dist/{ts|js} para o diretório do novo projeto
+    try {
+      fs.cpSync(templateDir, targetDir, { recursive: true });
+    } catch (err) {
+      console.error(kleur.red("❌ Failed to copy template files."));
+      console.error(err);
+      process.exit(1);
     }
 
     const basePackage: any = {
@@ -293,6 +263,7 @@ program
         },
         include: ["src"],
       };
+      // Sobrescreve tsconfig se já foi copiado, garantindo a config correta
       fs.writeFileSync(path.join(targetDir, "tsconfig.json"), JSON.stringify(tsconfig, null, 2), {
         encoding: "utf-8",
       });

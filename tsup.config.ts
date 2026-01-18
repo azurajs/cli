@@ -15,6 +15,8 @@ export default defineConfig({
   treeshake: true,
   target: "es2020",
 
+  publicDir: "src/templates",
+
   esbuildOptions(options) {
     options.tsconfig = "./tsconfig.build.json";
   },
