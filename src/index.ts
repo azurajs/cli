@@ -7,11 +7,24 @@ import kleur from "kleur";
 import { fileURLToPath } from "url";
 
 const program = new Command();
-program.name("azurajs").description("⚙️ CLI from azurajs - the best framework").version("1.1.1");
+program.name("azurajs").description("⚙️ CLI from azurajs - the best framework").version("1.2.0");
+
+program
+  .command("info")
+  .description("Show CLI information")
+  .alias("i")
+  .action(() => {
+    console.log(kleur.green().bold("=========================================="));
+    console.log(kleur.cyan().bold("   AzuraJS — The Next Gen Framework"));
+    console.log(kleur.white(`   Version: ${program.version()}`));
+    console.log(kleur.white(`   Node: ${process.version}`));
+    console.log(kleur.green().bold("=========================================="));
+  });
 
 program
   .command("create <name>")
   .description("Create new project")
+  .alias("new")
   .action(async (name) => {
     const response = await prompts([
       {
